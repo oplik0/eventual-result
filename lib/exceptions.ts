@@ -9,7 +9,7 @@ class ErrWrappingValue extends Error {
       errorOptions.cause = value;
     }
 
-    super(`${message} ${value.toString()}`, errorOptions);
+    super(`${message}: ${value.toString()}`, errorOptions);
 
     this.value = value;
   }
