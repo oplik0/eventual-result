@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this
 project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+- allow creating `EventualResult` without try/catch for safe promises
+- add static create methods to `EventualResult` as alternative to the constructor
+
 ## 0.10.2 - 2024-05-29
 
 ### Fixed

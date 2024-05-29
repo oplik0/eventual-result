@@ -30,8 +30,10 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
       | (() => Promise<ValueOrResult<T, E>>)
       | Promise<ValueOrResult<T, E>>
       | PromiseLike<ValueOrResult<T, E>>,
+      safe?: boolean,
   ) {
-    try {
+    // avoid try/catch for performance reasons if safe is true
+    if (safe) {
       const promise = typeof originator === "function"
         ? originator()
         : originator;
@@ -52,9 +54,51 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
           return result;
         },
       );
-    } catch (e) {
-      this.promise = Promise.reject(e);
+    } else {
+      try {
+        const promise = typeof originator === "function"
+          ? originator()
+          : originator;
+        // Handle the promise resolving to a `Result`
+        this.promise = (promise as Promise<ValueOrResult<T, E>>).then(
+          (result) => {
+            // If it's an `Ok` then we can unwrap it
+            if (result instanceof Ok) {
+              return result.unwrap();
+            }
+  
+            // If it's an `Err` then it should throw the inner error
+            if (result instanceof Err) {
+              throw result.unwrapErr();
+            }
+  
+            // Otherwise we can just pass it through
+            return result;
+          },
+        );
+      } catch (e) {
+        this.promise = Promise.reject(e);
+      }
     }
+  }
+  /* === Static Methods === */
+
+  /**
+   * Creates an `EventualResult` from a `Promise`
+   */
+  static fromPromise<T, E = unknown>(
+    promise: Promise<ValueOrResult<T, E>>,
+  ): EventualResult<T, E> {
+    return new EventualResult(promise);
+  }
+
+  /**
+   * Creates an `EventualResult` from a safe (never-throwing) promise
+   */
+  static fromSafePromise<T, E = unknown>(
+    promise: Promise<ValueOrResult<T, E>>,
+  ): EventualResult<T, E> {
+    return new EventualResult(promise);
   }
 
   /* === Result Methods === */
