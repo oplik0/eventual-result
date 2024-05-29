@@ -18,18 +18,18 @@ export function run(
   return new EventualResult<Output, Output>(async () => {
     const p = new Deno.Command(cmd, {
       ...options,
-      stdin: "piped",
+      stdin: "inherit",
       stderr: "piped",
       stdout: "piped",
     });
     const child = p.spawn();
-    const result = await child.output();;
+    const result = await child.status;;
     const decoder = new TextDecoder();
 
-    const stdout = decoder.decode(result.stdout);
-    const stderr = decoder.decode(result.stderr);
+    const output = await p.output();
+    const stdout = decoder.decode(output.stdout);
+    const stderr = decoder.decode(output.stderr);
 
-    child.stdin?.close();
     if (result.success) {
       return new Ok({ stdout, stderr });
     } else {
