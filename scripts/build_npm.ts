@@ -16,7 +16,7 @@ await build({
   typeCheck: false,
   // package.json properties
   package: {
-    name: "eventual-result",
+    name: "@opliko/eventual-result",
     // Strip the `v` from the tag
     version: Deno.args[0]?.replace(/^v/, ""),
     description:
