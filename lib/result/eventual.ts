@@ -29,27 +29,29 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
     originator:
       | (() => Promise<ValueOrResult<T, E>>)
       | Promise<ValueOrResult<T, E>>
-      | PromiseLike<ValueOrResult<T,E>>,
+      | PromiseLike<ValueOrResult<T, E>>,
   ) {
     try {
       const promise = typeof originator === "function"
         ? originator()
         : originator;
       // Handle the promise resolving to a `Result`
-      this.promise = (promise as Promise<ValueOrResult<T,E>>).then((result) => {
-        // If it's an `Ok` then we can unwrap it
-        if (result instanceof Ok) {
-          return result.unwrap();
-        }
+      this.promise = (promise as Promise<ValueOrResult<T, E>>).then(
+        (result) => {
+          // If it's an `Ok` then we can unwrap it
+          if (result instanceof Ok) {
+            return result.unwrap();
+          }
 
-        // If it's an `Err` then it should throw the inner error
-        if (result instanceof Err) {
-          throw result.unwrapErr();
-        }
+          // If it's an `Err` then it should throw the inner error
+          if (result instanceof Err) {
+            throw result.unwrapErr();
+          }
 
-        // Otherwise we can just pass it through
-        return result;
-      });
+          // Otherwise we can just pass it through
+          return result;
+        },
+      );
     } catch (e) {
       this.promise = Promise.reject(e);
     }

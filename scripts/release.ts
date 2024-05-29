@@ -75,25 +75,24 @@ const result = await getDesiredVersion()
   .map(() => {
     console.log("Formatting the changelog...");
 
-    return run({
-      cmd: ["deno", "fmt", changelogPath],
+    return run("deno", {
+      args: ["fmt", changelogPath],
       cwd: rootPath,
     });
   })
   .map(() => {
     console.log("Staging changes...");
 
-    return run({
-      cmd: ["git", "add", "-A"],
+    return run("git", {
+      args: ["add", "-A"],
       cwd: rootPath,
     });
   })
   .map(() => {
     console.log("Creating release commit...");
 
-    return run({
-      cmd: [
-        "git",
+    return run("git", {
+      args: [
         "commit",
         "-m",
         `Release v${getDesiredVersion().unwrap()}`, // `.unwrap` here is clunky but passing state through callbacks sucks
@@ -104,9 +103,8 @@ const result = await getDesiredVersion()
   .map(() => {
     console.log("Tagging release...");
 
-    return run({
-      cmd: [
-        "git",
+    return run("git", {
+      args: [
         "tag",
         `v${getDesiredVersion().unwrap()}`, // `.unwrap` here is clunky but passing state through callbacks sucks
       ],

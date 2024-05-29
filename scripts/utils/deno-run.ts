@@ -1,9 +1,7 @@
 import { Err, EventualResult, Ok } from "../../lib/mod.ts";
 
-type AllRunOptions = Parameters<typeof Deno.run>[0];
-type RunOptions =
-  & Omit<AllRunOptions, "stdin" | "stderr" | "stdout">
-  & Required<Pick<AllRunOptions, "cmd">>;
+type AllRunOptions = Deno.CommandOptions;
+type RunOptions = Omit<AllRunOptions, "stdin" | "stderr" | "stdout">;
 
 type Output = {
   stdout: string;
@@ -14,21 +12,22 @@ type Output = {
  * Run a shell command
  */
 export function run(
+  cmd: string | URL,
   options: RunOptions,
 ): EventualResult<Output, Output> {
   return new EventualResult<Output, Output>(async () => {
-    const p = Deno.run({
+    const p = new Deno.Command(cmd, {
       ...options,
       // stdin: "null",
       stderr: "piped",
       stdout: "piped",
     });
 
-    const result = await p.status();
+    const result = await p.output();
     const decoder = new TextDecoder();
 
-    const stdout = decoder.decode(await p.output());
-    const stderr = decoder.decode(await p.stderrOutput());
+    const stdout = decoder.decode(result.stdout);
+    const stderr = decoder.decode(result.stderr);
 
     if (result.success) {
       return new Ok({ stdout, stderr });

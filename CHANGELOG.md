@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this
 project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+- minor typing and formatting issues
+- use `Deno.Command` in release scripts
+
 ## 0.10.0 - 2024-05-29
 
 ### Fixed
