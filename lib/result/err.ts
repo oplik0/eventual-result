@@ -51,6 +51,17 @@ export class Err<E> implements Result<never, E> {
     return fallback();
   }
 
+  effect(): Result<never, E> {
+    return this;
+  }
+
+  effectErr(op: (value: E) => void): Result<never, E> {
+    return this.mapErr<E>((value) => {
+      op(value);
+      return value;
+    });
+  }
+
   and<T>(_other: Result<T, E>): Err<E> {
     return this;
   }

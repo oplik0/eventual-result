@@ -8,8 +8,11 @@ project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
 - allow creating `EventualResult` without try/catch for safe promises
-- add static create methods to `EventualResult` as alternative to the constructor
+- add static create methods to `EventualResult` as alternative to the
+  constructor
+- effect-only methods (run without modifying underlying value)
 
 ## 0.10.2 - 2024-05-29
 

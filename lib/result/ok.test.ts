@@ -100,6 +100,27 @@ Deno.test("#mapOrElse", () => {
   assertEquals(lengthOrDefault, 8);
 });
 
+Deno.test("#effect", () => {
+  let sideEffect = false;
+  const ok = new Ok("whatever").effect(() => {
+    sideEffect = true;
+  });
+
+  assertEquals(sideEffect, true);
+  assertEquals(ok, new Ok("whatever"));
+});
+
+Deno.test("#effectErr", () => {
+  let sideEffect = false;
+  // @ts-expect-error: effectError doesn't have any parameters `Ok`, only on `Err`
+  const ok = new Ok("whatever").effectErr(() => {
+    sideEffect = true;
+  });
+
+  assertEquals(sideEffect, false);
+  assertEquals(ok, new Ok("whatever"));
+});
+
 Deno.test("#and", () => {
   const result = new Ok("foo").and(new Ok("bar"));
 

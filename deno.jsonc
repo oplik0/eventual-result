@@ -6,5 +6,11 @@
     "release": "deno run -A ./scripts/release.ts",
     // Ensure the changelog is valid
     "validate-changelog": "deno run -A ./scripts/validate_changelog.ts"
+  },
+  "fmt": {
+    "exclude": [
+      "npm/",
+      "README.md"
+    ]
   }
 }

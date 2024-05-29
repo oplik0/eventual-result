@@ -125,6 +125,26 @@ Deno.test("method signatures of `Ok` and `Err` align", async (t) => {
     assertEquals(result, 1);
   });
 
+  await t.step("#effect", () => {
+    let sideEffect = false;
+    const result = divide(1, 2).effect((result) => {
+      sideEffect = result === 0.5;
+    });
+
+    assertEquals(result, new Ok(0.5));
+    assertEquals(sideEffect, true);
+  });
+
+  await t.step("#effectErr", () => {
+    let sideEffect = true;
+    const result = divide(1, 0).effectErr((result) => {
+      sideEffect = result === "You cannot divide by `0`";
+    });
+
+    assertEquals(result, new Err("You cannot divide by `0`"));
+    assertEquals(sideEffect, true);
+  });
+
   await t.step("#and", () => {
     const result = divide(1, 2).and(new Ok(0));
 

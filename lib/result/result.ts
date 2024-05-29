@@ -91,6 +91,14 @@ export interface Result<T, E> {
    * value of `Ok`.
    */
   mapOr<U>(fallback: U, op: (value: T) => U): U;
+  /**
+   * Run a side effect if `Ok` without modifying the underlying value
+   */
+  effect(op: (value: T) => void): Result<T, E>;
+  /**
+   * Run a side effect if `Err` without modifying the underlying value
+   */
+  effectErr(op: (value: E) => void): Result<T, E>;
 
   /**
    * Returns the result of the `fallback` operation if `Err`, otherwise applies the `op`

@@ -53,6 +53,17 @@ export class Ok<T> implements Result<T, never> {
     return op(this.val);
   }
 
+  effect(op: (value: T) => void): Result<T, never> {
+    return this.map<T>((value) => {
+      op(value);
+      return value;
+    });
+  }
+
+  effectErr(): Result<T, never> {
+    return this;
+  }
+
   and<E>(other: Result<T, E>): Result<T, E> {
     return other;
   }

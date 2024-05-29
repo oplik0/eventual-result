@@ -197,6 +197,106 @@ Deno.test("#mapOrElse", async (t) => {
   });
 });
 
+Deno.test("#effect", async (t) => {
+  await t.step("when returning a value", async () => {
+    const eventuallyOk = new EventualResult(Promise.resolve("ok"));
+    let sideEffect = false;
+    const eventuallyOkLength = eventuallyOk.effect((value) => {
+      sideEffect = value === "ok";
+    });
+
+    assertEquals(await eventuallyOkLength, new Ok("ok"));
+    assertEquals(sideEffect, true);
+
+    const eventuallyErr = new EventualResult<never>(Promise.reject("err"));
+    let sideEffectErr = false;
+    const eventuallyErrLength = eventuallyErr.effect((value: string) => {
+      sideEffectErr = value === "err";
+    });
+
+    assertEquals(await eventuallyErrLength, new Err("err"));
+    assertEquals(sideEffectErr, false);
+  });
+
+  await t.step("when returning a `Promise`", async () => {
+    const eventuallyOk = new EventualResult(Promise.resolve("ok"));
+    let sideEffect = false;
+    const eventuallyOkLength: EventualResult<string, unknown> = eventuallyOk
+      .effect((value) =>
+        new Promise((resolve) => {
+          sideEffect = value === "ok";
+          resolve();
+        })
+      );
+
+    assertEquals(await eventuallyOkLength, new Ok("ok"));
+    assertEquals(sideEffect, true);
+
+    const eventuallyErr = new EventualResult<never>(Promise.reject("err"));
+    let sideEffectErr = false;
+    const eventuallyErrLength = eventuallyErr.effect((value) =>
+      new Promise((resolve) => {
+        sideEffectErr = value === "err";
+        resolve();
+      })
+    );
+
+    assertEquals(await eventuallyErrLength, new Err("err"));
+    assertEquals(sideEffectErr, false);
+  });
+});
+
+Deno.test("#effectErr", async (t) => {
+  await t.step("when returning a value", async () => {
+    const eventuallyOk = new EventualResult(Promise.resolve("ok"));
+    let sideEffect = false;
+    const eventuallyOkLength = eventuallyOk.effectErr((value) => {
+      sideEffect = value === "ok";
+    });
+
+    assertEquals(await eventuallyOkLength, new Ok("ok"));
+    assertEquals(sideEffect, false);
+
+    const eventuallyErr = new EventualResult<never, string>(
+      Promise.reject("err"),
+    );
+    let sideEffectErr = false;
+    const eventuallyErrLength = eventuallyErr.effectErr((value: string) => {
+      sideEffectErr = value === "err";
+    });
+
+    assertEquals(await eventuallyErrLength, new Err("err"));
+    assertEquals(sideEffectErr, true);
+  });
+
+  await t.step("when returning a `Promise`", async () => {
+    const eventuallyOk = new EventualResult(Promise.resolve("ok"));
+    let sideEffect = false;
+    const eventuallyOkLength: EventualResult<string, unknown> = eventuallyOk
+      .effectErr((value) =>
+        new Promise((resolve) => {
+          sideEffect = value === "ok";
+          resolve();
+        })
+      );
+
+    assertEquals(await eventuallyOkLength, new Ok("ok"));
+    assertEquals(sideEffect, false);
+
+    const eventuallyErr = new EventualResult<never>(Promise.reject("err"));
+    let sideEffectErr = false;
+    const eventuallyErrLength = eventuallyErr.effectErr((value) =>
+      new Promise((resolve) => {
+        sideEffectErr = value === "err";
+        resolve();
+      })
+    );
+
+    assertEquals(await eventuallyErrLength, new Err("err"));
+    assertEquals(sideEffectErr, true);
+  });
+});
+
 Deno.test("#andThen", async (t) => {
   await t.step("when the operation returns an `Ok`", async (t) => {
     await t.step("and the promise resolves", async () => {

@@ -30,7 +30,7 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
       | (() => Promise<ValueOrResult<T, E>>)
       | Promise<ValueOrResult<T, E>>
       | PromiseLike<ValueOrResult<T, E>>,
-      safe?: boolean,
+    safe?: boolean,
   ) {
     // avoid try/catch for performance reasons if safe is true
     if (safe) {
@@ -66,12 +66,12 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
             if (result instanceof Ok) {
               return result.unwrap();
             }
-  
+
             // If it's an `Err` then it should throw the inner error
             if (result instanceof Err) {
               throw result.unwrapErr();
             }
-  
+
             // Otherwise we can just pass it through
             return result;
           },
@@ -218,6 +218,26 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
     const result = await this;
 
     return result.mapOrElse(fallback, op);
+  }
+
+  /**
+   * Run a side effect if `EventualResult` is `Ok` without modifying the underlying value
+   */
+  effect(op: (value: T) => MaybeAsync<void>): EventualResult<T, E> {
+    return this.map<T>(async (value) => {
+      await op(value);
+      return value;
+    });
+  }
+
+  /**
+   * Run a side effect if `EventualResult` is `Err` without modifying the underlying value
+   */
+  effectErr(op: (value: E) => MaybeAsync<void>): EventualResult<T, E> {
+    return this.mapErr<E>(async (value) => {
+      await op(value);
+      return value;
+    });
   }
 
   /**
