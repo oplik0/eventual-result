@@ -23,7 +23,7 @@ export function run(
       stdout: "piped",
     });
     const child = p.spawn();
-    const result = await child.status;;
+    const result = await child.status;
     const decoder = new TextDecoder();
 
     const output = await p.output();
