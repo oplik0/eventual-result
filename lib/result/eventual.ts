@@ -28,15 +28,15 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
   constructor(
     originator:
       | (() => Promise<ValueOrResult<T, E>>)
-      | Promise<ValueOrResult<T, E>>,
+      | Promise<ValueOrResult<T, E>>
+      | PromiseLike<ValueOrResult<T,E>>,
   ) {
     try {
       const promise = typeof originator === "function"
         ? originator()
         : originator;
-
       // Handle the promise resolving to a `Result`
-      this.promise = promise.then((result) => {
+      this.promise = (promise as Promise<ValueOrResult<T,E>>).then((result) => {
         // If it's an `Ok` then we can unwrap it
         if (result instanceof Ok) {
           return result.unwrap();
