@@ -5,12 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this
 project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.12.0 - 2024-06-11
 
 ### Added
+
 - `expectResult` that returns not the value, but the result if it's `Ok`
 
 ### Fixed
+
 - export `run` fron `mod.ts`
 
 ## 0.11.0 - 2024-05-29
