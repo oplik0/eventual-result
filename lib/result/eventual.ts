@@ -174,9 +174,12 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
    * rejecting with `ExpectError` with the given message if the result is `Err`
    */
   expectResult(message: string): EventualResult<T, never> {
-    return new EventualResult(this.promise.catch((err) => {
-      throw new ExpectError(message, err);
-    }), true);
+    return new EventualResult(
+      this.promise.catch((err) => {
+        throw new ExpectError(message, err);
+      }),
+      true,
+    );
   }
 
   /**
