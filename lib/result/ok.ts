@@ -23,6 +23,10 @@ export class Ok<T> implements Result<T, never> {
     return this.val;
   }
 
+  expectResult(_message: string): Ok<T> {
+    return this;
+  }
+
   unwrapErr(): never {
     throw new UnwrapError("Cannot unwrap `Ok` to `Err`", this.val);
   }

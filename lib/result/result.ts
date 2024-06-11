@@ -59,6 +59,11 @@ export interface Result<T, E> {
   expectErr(message: string): E;
 
   /**
+   * Returns the result or throws an `ExpectError` with the given message if the result is `Err`
+   */
+  expectResult(message: string): Result<T, never>;
+
+  /**
    * Transforms an `Ok` of one value into an `Ok` of another value
    *
    * If the `Result` is instead an `Err`, the `Err` is just passed along

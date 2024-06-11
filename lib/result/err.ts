@@ -23,6 +23,10 @@ export class Err<E> implements Result<never, E> {
     throw new ExpectError(message, this.val);
   }
 
+  expectResult(message: string): never {
+    throw new ExpectError(message, this.val);
+  }
+
   unwrapErr(): E {
     return this.val;
   }

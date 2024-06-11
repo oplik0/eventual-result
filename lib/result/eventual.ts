@@ -170,6 +170,16 @@ export class EventualResult<T, E = unknown> implements Promise<Result<T, E>> {
   }
 
   /**
+   * Converts `EventualResult<T, E>` into `EventualResult<T, never>`,
+   * rejecting with `ExpectError` with the given message if the result is `Err`
+   */
+  expectResult(message: string): EventualResult<T, never> {
+    return new EventualResult(this.promise.catch((err) => {
+      throw new ExpectError(message, err);
+    }), true);
+  }
+
+  /**
    * Transforms an `EventualResult<T>` into an `EventualResult<U>`
    */
   map<U>(op: (value: T) => MaybeAsync<U>): EventualResult<U, E> {
